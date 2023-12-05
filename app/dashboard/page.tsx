@@ -3,7 +3,7 @@ import { Card, Title, Text } from '@tremor/react';
 import Search from '../search';
 import UsersTable from '../table';
 import { auth } from '../auth';
-
+import Chart from '../journal/chart';
 
 interface User {
   user_id: number;
@@ -63,12 +63,17 @@ export default async function IndexPage({
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>Previous Scores</Title>
-      <Text>A list of previous scores from the Mindtune algorithm</Text>
+      {/* <Title>Previous Scores</Title> */}
+      <h3 className="text-4xl font-bold mb-6">Previous Scores</h3>
+      <p className="text-gray-600 mb-4">
+      A list of previous scores from the Mindtune algorithm
+      </p>
+      {/* <Text>A list of previous scores from the Mindtune algorithm</Text> */}
       <Search />
       <Card className="mt-6">
         <UsersTable users={users} /> 
       </Card>
+      <Chart />
     </main>
   );
 }
