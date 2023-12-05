@@ -9,10 +9,12 @@ import {
 } from '@tremor/react';
 
 interface User {
-  id: number;
+  user_id: number;
   name: string;
-  username: string;
-  email: string;
+  timestamp: string;
+  pitchscore: number;
+  speechrate: number;
+  intonation: number;
 }
 
 export default function UsersTable({ users }: { users: User[] }) {
@@ -20,20 +22,26 @@ export default function UsersTable({ users }: { users: User[] }) {
     <Table>
       <TableHead>
         <TableRow>
-          <TableHeaderCell>Name</TableHeaderCell>
-          <TableHeaderCell>Username</TableHeaderCell>
-          <TableHeaderCell>Email</TableHeaderCell>
+          <TableHeaderCell>Date of Score</TableHeaderCell>
+          <TableHeaderCell>Pitch Score</TableHeaderCell>
+          <TableHeaderCell>Speech Rate</TableHeaderCell>
+          <TableHeaderCell>Intonation</TableHeaderCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell>{user.name}</TableCell>
+          <TableRow key={user.timestamp}>
             <TableCell>
-              <Text>{user.username}</Text>
+              <Text>{user.timestamp}</Text>
             </TableCell>
             <TableCell>
-              <Text>{user.email}</Text>
+              <Text>{user.pitchscore}</Text>
+            </TableCell>
+            <TableCell>
+              <Text>{user.speechrate}</Text>
+            </TableCell>
+            <TableCell>
+              <Text>{user.intonation}</Text>
             </TableCell>
           </TableRow>
         ))}
