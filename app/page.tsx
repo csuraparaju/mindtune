@@ -7,7 +7,7 @@ import { signIn, signOut } from 'next-auth/react';
 
 function Home() {
   return (
-    <div className="min-h-screen bg-grey-500 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-300 flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md max-w-2xl w-full">
         <h1 className="text-4xl text-center font-bold mb-6">Mindtune</h1>
         <p className="text-gray-600 mb-4">

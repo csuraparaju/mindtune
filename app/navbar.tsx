@@ -7,11 +7,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Playground', href: '/playground' }
-];
+
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -19,6 +15,17 @@ function classNames(...classes: string[]) {
 
 export default function Navbar({ user }: { user: any }) {
   const pathname = usePathname();
+
+  let navigation : any[] = [];
+
+  if(!user) {
+    navigation.push({ name: 'Home', href: '/' });
+  }
+  else{
+    navigation.push({ name: 'Home', href: '/' });
+    navigation.push({ name: 'Dashboard', href: '/dashboard' });
+    navigation.push({ name: 'Playground', href: '/playground' });
+  }
 
   return (
     <Disclosure as="nav" className="bg-white shadow-sm">
@@ -60,7 +67,8 @@ export default function Navbar({ user }: { user: any }) {
                           ? 'border-slate-500 text-gray-900'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                         'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
-                      )}
+                      )
+                    }
                       aria-current={pathname === item.href ? 'page' : undefined}
                     >
                       {item.name}

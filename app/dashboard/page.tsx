@@ -2,6 +2,8 @@ import { sql } from '@vercel/postgres';
 import { Card, Title, Text } from '@tremor/react';
 import Search from '../search';
 import UsersTable from '../table';
+import { auth } from '../auth';
+
 
 interface User {
   user_id: number;
@@ -12,64 +14,57 @@ interface User {
   intonation: number;
 }
 
+
+
 export default async function IndexPage({
   searchParams
 }: {
-  searchParams: { q: string };
+  searchParams: { q: string },
 }) {
-  // if table doesn't exist, create it
 
-  // store pitchData, speechRate and intonation as 
-  // comma separated values in a single column 
+  const session = await auth();
+  const user = session?.user;
 
-//   await sql`
-//   CREATE TABLE IF NOT EXISTS Users (
-//     id INTEGER PRIMARY KEY,
-//     name VARCHAR(255),
-//     email VARCHAR(255),
-//     image VARCHAR(255),
-//     createdAt TIMESTAMP DEFAULT NOW()
-//     );
-//   `;
-
-//   await sql`
-//   CREATE TABLE IF NOT EXISTS Scores (
-//     user_id INTEGER,
-//     timestamp TIMESTAMP DEFAULT NOW(),
-//     pitchScore FLOAT,
-//     speechRate FLOAT,
-//     intonation FLOAT,
-//     FOREIGN KEY (user_id) REFERENCES Users(id)
-// );
-  
-//   `;
-
-  //await sql`
-  //INSERT INTO Users (id, name, email, image) VALUES (1, 'default', 'default@gmail.com', 'https://avatars.githubusercontent.com/u/47280503?v=4');`;
-
-  //await sql`
-  //INSERT INTO Scores (user_id, pitchScore, speechRate, intonation)
-  //VALUES (1, 0, 0, 0);`;
-  
-
+  if(!user) {
+    return (
+      <div>
+        <h1>Not logged in</h1>
+      </div>
+    )
+  }
+   
   const search = searchParams.q ?? '';
-  const result = await sql`
-    SELECT Scores.user_id, Users.name, CAST(Scores.timestamp as VARCHAR(255)), Scores.pitchScore, Scores.speechRate, Scores.intonation
-    FROM scores 
-    INNER JOIN users
-    ON Scores.user_id = Users.id
-    WHERE Scores.timestamp::text ILIKE ${'%' + search + '%'};
+
+  let selectuser = await sql`
+    SELECT id FROM users WHERE email = ${user?.email};
   `;
 
-  const users = result.rows as User[];
+
+  const scoreResult = await sql`
+    SELECT CAST(Scores.timestamp as VARCHAR(255)), Scores.pitchScore, Scores.speechRate, Scores.intonation
+    FROM scores WHERE Scores.timestamp::text ILIKE ${'%' + search + '%'} AND Scores.user_id = ${selectuser.rows[0].id};
+  `;
+
+  // const result = await sql`
+  //   SELECT Scores.user_id, Users.name, CAST(Scores.timestamp as VARCHAR(255)), Scores.pitchScore, Scores.speechRate, Scores.intonation
+  //   FROM scores 
+  //   INNER JOIN users
+  //   ON Scores.user_id = Users.id
+  //   WHERE Users.email = ${user?.email} AND Scores.timestamp::text ILIKE ${'%' + search + '%'};
+  // `; 
+
+  const users = scoreResult.rows as User[];
+
+  console.log(users);
   users.forEach(user => {
     user.timestamp = new Date(user.timestamp).toLocaleDateString("en-US", { weekday:"long", year:"numeric", month:"short", day:"numeric"});
   });
 
+
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <Title>Previous Scores</Title>
-      <Text>A list of previous scores from the Mindtune algorithm for { users[0].name }</Text>
+      <Text>A list of previous scores from the Mindtune algorithm</Text>
       <Search />
       <Card className="mt-6">
         <UsersTable users={users} /> 
